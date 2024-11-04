@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import com.hajicor3.course.entities.User;
 import com.hajicor3.course.repositories.UserRepository;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class UserService {
 	
@@ -31,5 +33,20 @@ public class UserService {
 	
 	public void delete (Long id) {
 		repository.deleteById(id);
+	}
+	
+	@Transactional //Faz o hibernate manter a sessão aberta durante o método UpdateData();
+	public User update(Long id, User obj) {
+		User entity	= repository.getReferenceById(id);
+		UpdateData(entity,obj);
+		return repository.save(entity);
+	}
+
+	private void UpdateData(User entity, User obj) {
+		entity.setName(obj.getName());
+		entity.setEmail(obj.getEmail());
+		entity.setPhone(obj.getPhone());
+		
+		
 	}
 }
