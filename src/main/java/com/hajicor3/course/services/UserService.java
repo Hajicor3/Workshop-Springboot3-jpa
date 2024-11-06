@@ -13,6 +13,7 @@ import com.hajicor3.course.repositories.UserRepository;
 import com.hajicor3.course.services.exceptions.DataBaseException;
 import com.hajicor3.course.services.exceptions.ResourceNotFoundException;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -52,9 +53,13 @@ public class UserService {
 	
 	@Transactional //Faz o hibernate manter a sessão aberta durante o método UpdateData();
 	public User update(Long id, User obj) {
-		User entity	= repository.getReferenceById(id);
-		UpdateData(entity,obj);
-		return repository.save(entity);
+		try {
+			User entity	= repository.getReferenceById(id);
+			UpdateData(entity,obj);
+			return repository.save(entity);
+		}catch(EntityNotFoundException e) {
+			throw new ResourceNotFoundException(id);
+		}
 	}
 
 	private void UpdateData(User entity, User obj) {
